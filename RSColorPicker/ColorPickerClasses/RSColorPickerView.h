@@ -46,6 +46,11 @@ IB_DESIGNABLE
  */
 @property (nonatomic) UIColor * selectionColor;
 
+ /**
+  * Set the selection color without calling the didChangeSelection: delegate method.
+  */
+- (void)setSelectionColor:(UIColor *)selectionColor quiet:(BOOL)quiet;
+
 /**
  * The delegate
  */

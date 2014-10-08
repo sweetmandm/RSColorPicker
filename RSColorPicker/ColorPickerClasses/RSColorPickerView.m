@@ -202,7 +202,7 @@
 
     [self genBitmap];
     [self generateBezierPaths];
-    [self handleStateChanged];
+    [self handleStateChangedQuiet:YES];
 
     [CATransaction commit];
 }
@@ -296,17 +296,29 @@
 }
 
 - (void)setSelectionColor:(UIColor *)selectionColor {
+    [self setSelectionColor:selectionColor quiet:NO];
+}
+
+- (void)setSelectionColor:(UIColor *)selectionColor quiet:(BOOL)quiet {
     state = [[RSColorPickerState alloc] initWithColor:selectionColor];
-    [self handleStateChanged];
+    [self handleStateChangedQuiet:quiet];
 }
 
 #pragma mark - Selection Updates -
 
 - (void)handleStateChanged {
-    [self handleStateChangedDisableActions:YES];
+    [self handleStateChangedQuiet:NO];
+}
+
+- (void)handleStateChangedQuiet:(BOOL)quiet {
+    [self handleStateChangedDisableActions:YES quiet:quiet];
 }
 
 - (void)handleStateChangedDisableActions:(BOOL)disable {
+    [self handleStateChangedDisableActions:disable quiet:NO];
+}
+
+- (void)handleStateChangedDisableActions:(BOOL)disable quiet:(BOOL)quiet {
     [CATransaction begin];
     [CATransaction setDisableActions: disable];
 
@@ -329,7 +341,7 @@
     [CATransaction commit];
 
     // notify delegate
-    if ([self.delegate respondsToSelector:@selector(colorPickerDidChangeSelection:)]) {
+    if (!quiet && [self.delegate respondsToSelector:@selector(colorPickerDidChangeSelection:)]) {
         [self.delegate colorPickerDidChangeSelection:self];
     }
 }
